@@ -6,6 +6,10 @@ pipeline {
         jdk 'JDK21'
     }
     
+    environment {
+        SONAR_HOST_URL = 'http://192.168.121.240:9000'
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -25,6 +29,15 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 sh 'mvn test'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube code analysis...'
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
         
