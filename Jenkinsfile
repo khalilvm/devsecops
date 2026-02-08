@@ -8,6 +8,8 @@ pipeline {
     
     environment {
         SONAR_HOST_URL = 'http://192.168.121.240:9000'
+        DOCKER_IMAGE = 'spring-devops-app'
+        DOCKER_TAG = '1.0.0'
     }
     
     stages {
@@ -55,6 +57,14 @@ pipeline {
             }
         }
         
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+            }
+        }
+        
         stage('Archive Artifacts') {
             steps {
                 echo 'Archiving build artifacts...'
@@ -68,6 +78,7 @@ pipeline {
             echo '✅ Pipeline completed successfully!'
             echo '📊 SonarQube: http://192.168.121.240:9000'
             echo '📦 Nexus: http://192.168.121.240:8081'
+            echo "🐳 Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
         }
         failure {
             echo '❌ Pipeline failed!'
