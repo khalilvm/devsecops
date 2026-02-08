@@ -48,6 +48,13 @@ pipeline {
             }
         }
         
+        stage('Deploy to Nexus') {
+            steps {
+                echo 'Uploading artifacts to Nexus...'
+                sh 'mvn deploy -DskipTests -s settings.xml'
+            }
+        }
+        
         stage('Archive Artifacts') {
             steps {
                 echo 'Archiving build artifacts...'
@@ -59,6 +66,8 @@ pipeline {
     post {
         success {
             echo '✅ Pipeline completed successfully!'
+            echo '📊 SonarQube: http://192.168.121.240:9000'
+            echo '📦 Nexus: http://192.168.121.240:8081'
         }
         failure {
             echo '❌ Pipeline failed!'
